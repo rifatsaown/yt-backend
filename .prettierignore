@@ -7,3 +7,12 @@
 #env files
 .env
 .env.*
+
+# Public files
+./public
+
+# Package files
+package-lock.json
+package.json
+yarn.lock
+tsconfig.json
