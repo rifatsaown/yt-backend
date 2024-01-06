@@ -7,4 +7,3 @@ const asyncHandler = (requestHandler: Function) => {
 }
 
 export { asyncHandler };
-
