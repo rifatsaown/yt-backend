@@ -24,5 +24,4 @@ app.use(cookieParser());
 /*------------- Middleware Section End----------------*/
 
 
-
 export { app };
