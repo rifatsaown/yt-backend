@@ -2,6 +2,7 @@ import "dotenv/config";
 import connectDB from './db/dbConnect';
 import { app } from "./app";
 
+// Set port
 const port = process.env.PORT || 3000;
 
 // Connect to DB
