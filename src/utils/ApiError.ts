@@ -16,6 +16,7 @@ class ApiError extends Error {
     this.errors = errors;
     this.succes = false;
 
+    // if stack is provided use it else create a new stack trace
     if(statck){
       this.stack = statck;
     }else{
