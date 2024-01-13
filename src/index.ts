@@ -1,17 +1,24 @@
 import "dotenv/config";
-import express from 'express';
-import fs from 'fs';
-import path from 'path';
 import connectDB from './db/dbConnect';
+import { app } from "./app";
 
-// const app = express();
-// const port = 3000;
+const port = process.env.PORT || 3000;
 
-connectDB();
+// Connect to DB
+connectDB()
+.then(() => {
+    app.listen(port, () => {
+        console.log(`Server running on port ${port}`);
+    });
+})
+.catch((err) => {
+    console.log("Error connecting to DB: ", err);
+});
 
 
 
-
+// import fs from 'fs';
+// import path from 'path';
 // app.get('/', (req, res) => {
 //   // const html = fs.readFileSync(path.resolve(__dirname, '../public/index.html'), 'utf-8');
 //   // res.send(html);
