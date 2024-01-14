@@ -18,7 +18,6 @@ connectDB()
 
 
 
-
 // import fs from 'fs';
 // import path from 'path';
 // app.get('/', (req, res) => {
