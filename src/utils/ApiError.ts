@@ -10,7 +10,7 @@ class ApiError extends Error {
     errors = [],
     statck = ""
   ){
-    super(message);
+    super(message); // call the parent constructor
     this.statusCode = statusCode;
     this.data = null;
     this.errors = errors;
