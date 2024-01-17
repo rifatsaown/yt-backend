@@ -55,7 +55,7 @@ userSchema.methods.verifyPassword = async function(password: string){
     return await bcrypt.compare(password, this.password);
 }
 
-// json web token generation method
+// json web token generation method for access token
 userSchema.methods.generateAccessToken = function(){
     const secret: Secret = process.env.ACCESS_TOKEN_SECRET || ""; // Provide a default value or handle the case when it is undefined
     return jwt.sign({
@@ -69,6 +69,7 @@ userSchema.methods.generateAccessToken = function(){
         expiresIn: process.env.ACCESS_TOKEN_EXPIRY
     }
 )}
+// json web token generation method for refresh token
 userSchema.methods.generateRefreshToken = function(){
     const secret: Secret = process.env.REFRESH_TOKEN_SECRET || ""; // Provide a default value or handle the case when it is undefined
     return jwt.sign({
