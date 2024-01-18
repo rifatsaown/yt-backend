@@ -16,7 +16,7 @@ app.use(cors(
 // express middleware for parsing json and urlencoded request body and static files
 app.use(express.json({ limit: "16kb" }));
 app.use(express.urlencoded({ extended: true, limit: "16kb" }));
-app.use(express.static("public"));
+app.use(express.static("public")); // serve static files from public folder
 
 // Cokie parser middleware
 app.use(cookieParser());
