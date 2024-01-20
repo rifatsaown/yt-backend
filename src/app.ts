@@ -4,7 +4,7 @@ import cookieParser from "cookie-parser";
 
 const app = express();
 
-/*------------- Middleware Section ----------------*/
+/*------------------------------------------ Middleware Section ----------------------------------------------------*/
 // CORS config
 app.use(cors(
     {
@@ -19,9 +19,8 @@ app.use(express.urlencoded({ extended: true, limit: "16kb" })); // for parsing a
 app.use(express.static("public")); // serve static files from public folder
 
 // Cokie parser middleware
-app.use(cookieParser());
-
-/*------------- Middleware Section End----------------*/
+app.use(cookieParser()); 
+/*------------------------------------------- Middleware Section End----------------------------------------------------*/
 
 
 export { app };
