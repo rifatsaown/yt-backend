@@ -19,7 +19,7 @@ app.use(express.urlencoded({ extended: true, limit: "16kb" })); // for parsing a
 app.use(express.static("public")); // serve static files from public folder
 
 // Cokie parser middleware
-app.use(cookieParser()); 
+app.use(cookieParser()); // parse cookie header and populate req.cookies with an object keyed by the cookie names.
 /*------------------------------------------- Middleware Section End----------------------------------------------------*/
 
 
