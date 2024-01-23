@@ -1,3 +1,4 @@
+// Used for sending responses to the client in a standard format with a status code, data, and message properties. 
 class ApiResponse {
     statusCode: number;
     data: any;
