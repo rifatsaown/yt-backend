@@ -1,3 +1,4 @@
+// Use: Error class for the API errors that will be thrown from the API routes. This class will be used in place of the Error class in the catch block of the async functions.
 class ApiError extends Error {
   // type definition
   statusCode: number;
