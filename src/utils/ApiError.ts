@@ -16,7 +16,6 @@ class ApiError extends Error {
     this.data = null;
     this.errors = errors;
     this.succes = false;
-
    
     /*
     What is Stack?
