@@ -23,4 +23,11 @@ app.use(cookieParser()); // parse cookie header and populate req.cookies with an
 /*------------------------------------------- Middleware Section End----------------------------------------------------*/
 
 
+// Routes
+import userRouter from './routes/user.routes';
+
+// Mounting the routes
+app.use('/api/v1/users', userRouter);
+
+
 export { app };
