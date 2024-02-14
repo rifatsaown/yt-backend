@@ -6,12 +6,28 @@ import { uploadToCloudinary } from "../utils/cloudinary";
 import { ApiResponse } from "../utils/ApiResponse";
 import fs from "fs";
 
+// Define the type for the files object 
+const generateAccessAndRefreshToken = async(userID: string) => {
+try {
+  const user = await User.findById(userID);
+  const accessToken = user?.generateAccessToken();
+  const refreshToken = user?.generateRefreshToken();
+
+  user.refreshToken = refreshToken;
+  await user?.save({ validateBeforeSave: false });
+
+  return { accessToken, refreshToken };
+
+} catch (error) {
+  throw new ApiError(500, "Something went wrong while generating the tokens");
+}
+};
+
 // Define the type for the files object
 interface Files {
   avater?: Express.Multer.File[];
   coverImage?: Express.Multer.File[];
 }
-
 const registerUser = asyncHandler(async (req: Request, res: Response) => {
   // Get the user input
   const { fullName, email, userName, password } = req.body;
@@ -74,4 +90,42 @@ const registerUser = asyncHandler(async (req: Request, res: Response) => {
   );
 });
 
-export { registerUser };
+const loginUser = asyncHandler(async (req: Request, res: Response) => {
+  const { email,userName, password } = req.body;
+
+  // Check if the user input is valid
+  if (!userName && !email) {
+    throw new ApiError(400, "Username or email is required");
+  }
+  const user = await User.findOne({
+    $or: [{ email }, { userName}],
+  });
+  if (!user) {
+    throw new ApiError(404, "User not found");
+  }
+  const isPasswordMatch = await user.verifyPassword(password);
+  if (!isPasswordMatch) {
+    throw new ApiError(401, "Invalid User credentials");
+  }
+
+  const { accessToken, refreshToken }=await generateAccessAndRefreshToken(user._id);
+
+  const loggedInUser = await User.findById(user._id).select("-password -refreshToken");
+
+  const options = {
+    httpOnly: true,
+    secure: true,
+  };
+
+  res.status(200)
+  .cookie("refreshToken", refreshToken, options)
+  .cookie("accessToken", accessToken, options)
+  .json(new ApiResponse(200, {
+    user : loggedInUser,
+    accessToken,
+    refreshToken
+  }, "User logged in successfully"));
+
+});
+
+export { registerUser ,loginUser};
