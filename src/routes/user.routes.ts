@@ -16,10 +16,10 @@ router.route("/register").post(upload.fields([
     }
 ]), registerUser);
 
-router.route("/login").post(loginUser);
+router.route("/login").post(loginUser); // Public route for login user 
 
 // Secure routes
-router.route("/").post(verifyJWT,logoutUser)
+router.route("/").post(logoutUser)
 
 
 export default router;

@@ -1,19 +1,26 @@
 import { Request, Response } from "express";
-import { asyncHandler } from "../utils/asyncHandler";
-import { ApiError } from "../utils/ApiError";
-import { User } from "../models/user.model";
-import { uploadToCloudinary } from "../utils/cloudinary";
-import { ApiResponse } from "../utils/ApiResponse";
 import fs from "fs";
+import { User } from "../models/user.model";
+import { ApiError } from "../utils/ApiError";
+import { ApiResponse } from "../utils/ApiResponse";
+import { asyncHandler } from "../utils/asyncHandler";
+import { uploadToCloudinary } from "../utils/cloudinary";
 
-// Define the type for the files object 
+
+/* 
+  Generate the access and refresh token
+  This function takes the user ID as an argument and returns an object containing the access token and refresh token 
+ */
 const generateAccessAndRefreshToken = async(userID: string) => {
 try {
   const user = await User.findById(userID);
-  const accessToken = user?.generateAccessToken();
-  const refreshToken = user?.generateRefreshToken();
+  if (!user) {
+    throw new ApiError(404, 'User not found');
+  }
+  const accessToken = user.generateAccessToken();
+  const refreshToken = user.generateRefreshToken();
 
-  user.refreshToken = refreshToken;
+  user.refreshToken = refreshToken; // Save the refresh token to the DB
   await user?.save({ validateBeforeSave: false });
 
   return { accessToken, refreshToken };
@@ -28,6 +35,8 @@ interface Files {
   avater?: Express.Multer.File[];
   coverImage?: Express.Multer.File[];
 }
+
+/* Register User */
 const registerUser = asyncHandler(async (req: Request, res: Response) => {
   // Get the user input
   const { fullName, email, userName, password } = req.body;
@@ -90,11 +99,11 @@ const registerUser = asyncHandler(async (req: Request, res: Response) => {
   );
 });
 
+/* Login User */
 const loginUser = asyncHandler(async (req: Request, res: Response) => {
   const { email,userName, password } = req.body;
 
-  // Check if the user input is valid
-  if (!userName && !email) {
+  if (!(userName || email)) { // Check if the username or email is provided or not
     throw new ApiError(400, "Username or email is required");
   }
   const user = await User.findOne({
@@ -128,6 +137,27 @@ const loginUser = asyncHandler(async (req: Request, res: Response) => {
 
 });
 
-const logoutUser = asyncHandler(async (req: Request, res: Response) => {});
+/* Logout User */
+const logoutUser = asyncHandler(async (req: Request, res: Response) => {
+   // Check if req.user is defined
+  await User.findByIdAndUpdate(
+    req.user._id,
+    {
+      $set: { refreshToken: undefined },
+    },
+    { new: true }
+  )
+  // Clear the cookies
+  const options = {
+    httpOnly: true,
+    secure: true,
+  };
+  res.status(200)
+  .clearCookie("refreshToken", options)
+  .clearCookie("accessToken", options)
+  .json(new ApiResponse(200, {}, "User logged out successfully"));
+  
+});
 
-export { registerUser ,loginUser, logoutUser};
+export { loginUser, logoutUser, registerUser };
+
