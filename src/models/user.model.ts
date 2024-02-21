@@ -3,7 +3,7 @@ import bcrypt from 'bcrypt';
 import jwt, { Secret } from 'jsonwebtoken';
 
 // Define the interface for the User document
-interface IUser extends Document {
+export interface IUser extends Document {
   userName: string;
   email: string;
   fullName: string;
@@ -98,5 +98,5 @@ userSchema.methods.generateRefreshToken = function (): string {
 };
 
 // Create the User model using the schema
-export { IUser };
+
 export const User = model<IUser>('User', userSchema);
