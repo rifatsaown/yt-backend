@@ -157,6 +157,7 @@ const logoutUser = asyncHandler(async (req: Request, res: Response) => {
   
 });
 
+// Refresh Access Token
 const refreshAccessToken = asyncHandler(async (req: Request, res: Response) => {
   const incomingRefreshToken = req.cookies.refreshToken || req.body.refreshToken;
   if (!incomingRefreshToken) {
@@ -190,5 +191,64 @@ const refreshAccessToken = asyncHandler(async (req: Request, res: Response) => {
   }
 });
 
-export { loginUser, logoutUser, registerUser , refreshAccessToken};
+// change Current Password
+const changePassword = asyncHandler(async (req: Request, res: Response) => {
+  const { currentPassword, newPassword } = req.body;
+  const user = await User.findById(req.user._id);
+  if (!user) {
+    throw new ApiError(404, "User not found");
+  }
+  const isPasswordMatch = await user.verifyPassword(currentPassword);
+  if (!isPasswordMatch) {
+    throw new ApiError(401, "Invalid User credentials");
+  }
+  user.password = newPassword;
+  await user.save({validateBeforeSave: false});
+
+  res.status(200)
+  .json(new ApiResponse(200, {}, "Password changed successfully"));
+});
+
+// update Account Details
+const updateAccountDetails = asyncHandler(async (req: Request, res: Response) => {
+  const {fullName, email} = req.body;
+
+  if(!fullName || !email){
+    throw new ApiError(400, "All fields are required");
+  }
+  // Update the user
+  const user = await User.findByIdAndUpdate(
+    req.user._id,
+    {
+      $set: { 
+        fullName,
+        email 
+      },
+    },
+    {new: true}).select("-password -refreshToken");
+
+  if (!user) {
+    throw new ApiError(500, "Something went wrong while updating the user");
+  }
+
+    res.status(200)
+    .json(new ApiResponse(200, user, "User details updated successfully"));
+});
+
+// get Current User
+const getCurrentUser = asyncHandler(async (req: Request, res: Response) => {
+  res.status(200)
+  .json(new ApiResponse(200, req.user, "User details retrieved successfully"));
+});
+
+
+export {
+  changePassword,
+  getCurrentUser,
+  loginUser,
+  logoutUser,
+  refreshAccessToken,
+  registerUser,
+  updateAccountDetails
+};
 
