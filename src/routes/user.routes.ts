@@ -1,10 +1,11 @@
 import { Router } from "express";
 import { loginUser, logoutUser, refreshAccessToken, registerUser } from "../controllers/user.controller";
-import { upload } from "../middlewares/multer.middleware";
 import { verifyJWT } from "../middlewares/auth.middleware";
+import { upload } from "../middlewares/multer.middleware";
 
 const router = Router();
 
+// Register user route with multer middleware to handle file uploads
 router.route("/register").post(upload.fields([
     {
         name: "avater",
