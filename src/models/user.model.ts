@@ -98,5 +98,4 @@ userSchema.methods.generateRefreshToken = function (): string {
 };
 
 // Create the User model using the schema
-
 export const User = model<IUser>('User', userSchema);
