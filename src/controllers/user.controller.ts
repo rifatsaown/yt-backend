@@ -13,7 +13,7 @@ import { uploadToCloudinary } from "../utils/cloudinary";
   Generate the access and refresh token
   This function takes the user ID as an argument and returns an object containing the access token and refresh token 
  */
-const generateAccessAndRefreshToken = async(userID: string) => {
+export const generateAccessAndRefreshToken = async(userID: string) => {
 try {
   const user = await User.findById(userID);
   if (!user) {
@@ -32,10 +32,8 @@ try {
 }
 };
 
-// Define the type for the files object
-
 /* Register User */
-const registerUser = asyncHandler(async (req: Request, res: Response) => {
+export const registerUser = asyncHandler(async (req: Request, res: Response) => {
   // Get the user input
   const { fullName, email, userName, password } = req.body;
 
@@ -98,7 +96,7 @@ const registerUser = asyncHandler(async (req: Request, res: Response) => {
 });
 
 /* Login User */
-const loginUser = asyncHandler(async (req: Request, res: Response) => {
+export const loginUser = asyncHandler(async (req: Request, res: Response) => {
   const { email,userName, password } = req.body;
 
   if (!(userName || email)) { // Check if the username or email is provided or not
@@ -136,7 +134,7 @@ const loginUser = asyncHandler(async (req: Request, res: Response) => {
 });
 
 /* Logout User */
-const logoutUser = asyncHandler(async (req: Request, res: Response) => {
+export const logoutUser = asyncHandler(async (req: Request, res: Response) => {
    // Check if req.user is defined
   await User.findByIdAndUpdate(
     req.user._id,
@@ -158,7 +156,7 @@ const logoutUser = asyncHandler(async (req: Request, res: Response) => {
 });
 
 // Refresh Access Token
-const refreshAccessToken = asyncHandler(async (req: Request, res: Response) => {
+export const refreshAccessToken = asyncHandler(async (req: Request, res: Response) => {
   const incomingRefreshToken = req.cookies.refreshToken || req.body.refreshToken;
   if (!incomingRefreshToken) {
     throw new ApiError(401, "Unauthorized request");
@@ -192,7 +190,7 @@ const refreshAccessToken = asyncHandler(async (req: Request, res: Response) => {
 });
 
 // change Current Password
-const changePassword = asyncHandler(async (req: Request, res: Response) => {
+export const changePassword = asyncHandler(async (req: Request, res: Response) => {
   const { currentPassword, newPassword } = req.body;
   const user = await User.findById(req.user._id);
   if (!user) {
@@ -210,7 +208,7 @@ const changePassword = asyncHandler(async (req: Request, res: Response) => {
 });
 
 // update Account Details
-const updateAccountDetails = asyncHandler(async (req: Request, res: Response) => {
+export const updateAccountDetails = asyncHandler(async (req: Request, res: Response) => {
   const {fullName, email} = req.body;
 
   if(!fullName || !email){
@@ -236,19 +234,7 @@ const updateAccountDetails = asyncHandler(async (req: Request, res: Response) =>
 });
 
 // get Current User
-const getCurrentUser = asyncHandler(async (req: Request, res: Response) => {
+export const getCurrentUser = asyncHandler(async (req: Request, res: Response) => {
   res.status(200)
   .json(new ApiResponse(200, req.user, "User details retrieved successfully"));
 });
-
-
-export {
-  changePassword,
-  getCurrentUser,
-  loginUser,
-  logoutUser,
-  refreshAccessToken,
-  registerUser,
-  updateAccountDetails
-};
-
