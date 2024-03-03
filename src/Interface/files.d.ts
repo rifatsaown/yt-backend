@@ -3,4 +3,4 @@ interface IFiles {
     coverImage?: Express.Multer.File[];
   }
 
-  export default IFiles;
+export default IFiles;

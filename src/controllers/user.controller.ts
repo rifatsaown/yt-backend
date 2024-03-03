@@ -216,7 +216,7 @@ export const updateAccountDetails = asyncHandler(async (req: Request, res: Respo
   }
   // Update the user
   const user = await User.findByIdAndUpdate(
-    req.user._id,
+    req.user?._id,
     {
       $set: { 
         fullName,
@@ -229,8 +229,60 @@ export const updateAccountDetails = asyncHandler(async (req: Request, res: Respo
     throw new ApiError(500, "Something went wrong while updating the user");
   }
 
-    res.status(200)
+  res.status(200)
     .json(new ApiResponse(200, user, "User details updated successfully"));
+});
+
+// update Avater
+export const updateAvater = asyncHandler(async (req: Request, res: Response) => {
+  const avaterLocalPath = req.file?.path; // Get the file from the request object
+  if (!avaterLocalPath) {
+    throw new ApiError(400, "Avater file is required");
+  }
+  const avater = await uploadToCloudinary(avaterLocalPath);
+  if (!avater?.secure_url) {
+    throw new ApiError(500, "Cloudinary error");
+  }
+  const user = await User.findByIdAndUpdate(
+    req.user?._id,
+    {
+      $set: { avater: avater.secure_url },
+    },
+    { new: true }
+  ).select("-password -refreshToken");
+
+  if (!user) {
+    throw new ApiError(500, "Something went wrong while updating the user");
+  }
+  fs.unlinkSync(avaterLocalPath); // delete the file from the server
+  res.status(200)
+  .json(new ApiResponse(200, user, "Avater updated successfully"));
+});
+
+// update Cover Image
+export const updateCoverImage = asyncHandler(async (req: Request, res: Response) => {
+  const coverImageLocalPath = req.file?.path;
+  if (!coverImageLocalPath) {
+    throw new ApiError(400, "Cover image file is required");
+  }
+  const coverImage = await uploadToCloudinary(coverImageLocalPath);
+  if (!coverImage?.secure_url) {
+    throw new ApiError(500, "Cloudinary error");
+  }
+  const user = await User.findByIdAndUpdate(
+    req.user?._id,
+    {
+      $set: { coverImage: coverImage.secure_url },
+    },
+    { new: true }
+  ).select("-password -refreshToken");
+
+  if (!user) {
+    throw new ApiError(500, "Something went wrong while updating the user");
+  }
+  fs.unlinkSync(coverImageLocalPath); // delete the file from the server
+  res.status(200)
+  .json(new ApiResponse(200, user, "Cover image updated successfully"));
 });
 
 // get Current User
