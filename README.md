@@ -1,5 +1,4 @@
-# yt-backend
-
+# This is the demo video streaming platform for practice project
 ## Project setup
 
 ```
